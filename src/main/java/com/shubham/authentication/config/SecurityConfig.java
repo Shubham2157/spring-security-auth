@@ -5,10 +5,12 @@ import com.shubham.authentication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // this is required for PreAuthorize and
+// PostAuthorize[checking to specific user is Authorized to see the data like if assigned to guest]
 public class SecurityConfig {
 
     @Autowired
@@ -30,9 +34,20 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
                         auth
+                              /*
+                                // Not good for lot of apis -> we can use method security
+                                .requestMatchers(HttpMethod.POST, "/rooms")
+                                .hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/rooms")
+                                .hasAnyRole("ADMIN", "STAFF")
+                                .requestMatchers(HttpMethod.GET, "/rooms/**")
+                                .hasAnyRole("ADMIN", "STAFF", "GUEST")
+                                */
                                 .requestMatchers("/user/**").permitAll()
                                 .anyRequest().authenticated())
+
                 //.httpBasic(Customizer.withDefaults());
+
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

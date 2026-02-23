@@ -17,6 +17,20 @@ public class Users {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    @Column(name = "role")
+    private String role;
+
+    public Users(Long id, String username, String password, Boolean isActive, String role) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.isActive = isActive;
+        this.role = role;
+    }
+
+    public Users() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,5 +61,13 @@ public class Users {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

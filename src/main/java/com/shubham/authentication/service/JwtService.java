@@ -17,8 +17,11 @@ public class JwtService {
 
     private final static String SECRET = "qwertyuiopas1235dfghjklzx7781jjsdhcvbnm83482823";
 
-    public String generateToken(String username){
-        return Jwts.builder().subject(username).claims(new HashMap<>())
+    public String generateToken(String username, String role){
+
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("Role", role);
+        return Jwts.builder().subject(username).claims(claims)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + 1000*60*30))
                 .signWith(geneateSignKey(), SignatureAlgorithm.HS256).compact();

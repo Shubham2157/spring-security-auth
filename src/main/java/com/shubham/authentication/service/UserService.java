@@ -3,6 +3,7 @@ package com.shubham.authentication.service;
 import com.shubham.authentication.entity.Users;
 import com.shubham.authentication.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +33,7 @@ public class UserService implements UserDetailsService {
         return User.builder()
                 .username(users.getUsername())
                 .password(users.getPassword())
-                .authorities(Collections.emptyList())
+                .authorities(new SimpleGrantedAuthority(users.getRole()))
                 .build();
     }
 }

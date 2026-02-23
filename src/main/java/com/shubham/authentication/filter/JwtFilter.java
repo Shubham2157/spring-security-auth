@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -35,11 +37,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null){
             Claims claims = jwtService.validateTokenAndExtractClaims(token);
+            String role = claims.get("Role", String.class);
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
             if (claims.getExpiration().after(new Date())){
                 // we need to put all auth related detail in security context holder
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                         new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-                                new ArrayList<>());
+                                simpleGrantedAuthorities);
                 usernamePasswordAuthenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
