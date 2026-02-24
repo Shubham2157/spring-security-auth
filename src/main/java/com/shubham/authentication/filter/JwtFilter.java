@@ -1,5 +1,7 @@
 package com.shubham.authentication.filter;
 
+import com.shubham.authentication.constant.Role;
+import com.shubham.authentication.dto.Room;
 import com.shubham.authentication.service.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -37,9 +39,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null){
             Claims claims = jwtService.validateTokenAndExtractClaims(token);
-            String role = claims.get("Role", String.class);
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
+            //String role = claims.get("Role", String.class);
+            Role role = Role.valueOf("ROLE_" + claims.get("Role", String.class));
+            List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>(List.of(new SimpleGrantedAuthority(role.name())));
+            role.getPermissions().forEach(permission -> {
+                simpleGrantedAuthorities.add(new SimpleGrantedAuthority(permission.name()));
+            });
             if (claims.getExpiration().after(new Date())){
                 // we need to put all auth related detail in security context holder
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =

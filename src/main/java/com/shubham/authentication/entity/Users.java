@@ -1,5 +1,6 @@
 package com.shubham.authentication.entity;
 
+import com.shubham.authentication.constant.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,9 +19,10 @@ public class Users {
     private Boolean isActive;
 
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public Users(Long id, String username, String password, Boolean isActive, String role) {
+    public Users(Long id, String username, String password, Boolean isActive, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -63,11 +65,11 @@ public class Users {
         isActive = active;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

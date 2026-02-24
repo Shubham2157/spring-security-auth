@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -30,10 +32,16 @@ public class UserService implements UserDetailsService {
 
         Users users = getUserDetails(username);
 
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(users.getRole().name()));
+        users.getRole().getPermissions().forEach(permission -> {
+            authorities.add(new SimpleGrantedAuthority(permission.name()));
+        });
+
         return User.builder()
                 .username(users.getUsername())
                 .password(users.getPassword())
-                .authorities(new SimpleGrantedAuthority(users.getRole()))
+                .authorities(authorities)
                 .build();
     }
 }

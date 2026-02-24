@@ -1,6 +1,7 @@
 package com.shubham.authentication.controller;
 
 
+import com.shubham.authentication.constant.Role;
 import com.shubham.authentication.dto.UserRequest;
 import com.shubham.authentication.entity.Users;
 import com.shubham.authentication.repo.UserRepo;
@@ -38,7 +39,7 @@ public class UserController {
     public Users createUser(
             @RequestParam String username,
             @RequestParam String password,
-            @RequestParam String role
+            @RequestParam Role role
     ){
         Users users = new Users();
         users.setUsername(username);
